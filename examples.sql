@@ -23,15 +23,33 @@ where usr.id = 1;
 
 -- RESTAURANT PROFILE
 -- get all info for a restaurant by id
-
+select *
+from restaurants res
+where res.id = 1;
 -- get all reviews for a restaurant by id
+select res.name as Restaurant_Name, rev.content as Reviews, usr.first_name ||' '|| usr.last_name as Written_By
+from reviews rev
+	inner join restaurants res on rev.restaurant_id = res.id
+	inner join users usr on rev.user_id = usr.id
+where res.id = 1;
 -- get avg review for a restaurant by id
+select res.name, avg(rev.score) as Average_Score
+from restaurants res
+	inner join reviews rev on res.id = rev.restaurant_id
+where res.id = 1
+group by res.name;
 -- get count of favorites for a restaurant by id
+select res.name, count(fav.user_id)
+from restaurants res
+	inner join favorites fav on res.id = fav.restaurant_id
+where res.id = 1
+group by res.name;
 
 
 -- RESTAURANT SEARCH RESULTS PAGE
 -- get all matching rows for a restaurant by name (case insensitive search)
     -- include average review
     -- get count of favorites
+    
 -- limit by minimum review
 -- pagination
