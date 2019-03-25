@@ -5,7 +5,7 @@ create table users (
     last_name varchar(100),  -- "varying" just means that it won't be filled with spaces
     email varchar(200),
     password varchar(500)    -- we don't store passwords, we store "hashes"
-                             -- NEVEREVEREVER store passwords unencrypted  
+                            -- NEVEREVEREVER store passwords unencrypted  
 );
 
 create table restaurants (
@@ -13,6 +13,7 @@ create table restaurants (
     name varchar(200),
     address varchar(200),
     street varchar(200),
+    city varchar (100),
     state varchar(50),
     phone varchar(20),
     menu varchar(200),
