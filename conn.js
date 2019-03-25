@@ -10,12 +10,3 @@ const options = {
 //make a connection to the database specified by the options object
 const db = pgp(options);
 module.exports = db;
-
-// db.any('select * from users usr where usr.id = 1;', [true])
-//     .then(function(data) {
-//         // success;
-//         console.log(data);
-//     })
-//     .catch(function(error) {
-//         // error;
-//     });
