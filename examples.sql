@@ -50,6 +50,19 @@ group by res.name;
 -- get all matching rows for a restaurant by name (case insensitive search)
     -- include average review
     -- get count of favorites
-    
+select distinct res.name, avg(rev.score) as Average_Score, count(fav.user_id) as Number_Favorited
+from restaurants res
+	inner join reviews rev on res.id = rev.restaurant_id
+	inner join favorites fav on res.id = fav.restaurant_id
+	
+where res.name ilike 'chilis'
+group by res.name, fav.user_id;
 -- limit by minimum review
+select res.name, avg(rev.score) as Average_Score, count(fav.user_id) as Number_Favorited
+from restaurants res
+	inner join reviews rev on res.id = rev.restaurant_id
+	inner join favorites fav on res.id = fav.restaurant_id
+	
+where rev.score > 3
+group by res.name;
 -- pagination
