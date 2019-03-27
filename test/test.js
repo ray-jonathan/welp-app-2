@@ -6,8 +6,8 @@ chai.use(chaiAsPromised).should();
 
 const User = require('../models/user');
 const Restaurant = require('../models/restaurants');
-const Reviews = require('../models/Reviews');
-const Favorites = require('../models/Favorites');
+const Reviews = require('../models/reviews');
+const Favorites = require('../models/favorites');
 
 describe('Users model', () => {
     // happy path 👍🏼
