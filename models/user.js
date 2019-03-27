@@ -1,6 +1,7 @@
 // bring in the database connection
 const db = require('./conn');
 const Reviews = require('./reviews');
+const bcrypt = require('bcryptjs');
 
 // need a user object?
 // classes should start with an uppercase letter
@@ -37,16 +38,25 @@ class User {
                         where id=${this.id}
                             `);
     }
+    setPassword(newPassword){
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(newPassword, salt);
+        this.password = hash;
+    }
+    checkPassword(aPassword){
+        return bcrypt.compareSync(aPassword, this.password);
+    }
     get reviews() {
         return db.any(`select * from reviews where user_id = ${this.id};`)
             .then((arrayOfReviewData) => {
                 const arrayOfReviewInstances = [];
                 arrayOfReviewData.forEach((data) => {
+
+                    console.log('     vvvv this is "DATA" vvvv');
                     console.log(data);
-                    console.log('^^^^ that was DATA ^^^^');
                     console.log(' ');
 
-                    const newInstance = new Reviews (
+                    const newInstance = new Reviews(
                                                     data.id, 
                                                     data.score, 
                                                     data.content, 
@@ -55,12 +65,12 @@ class User {
                     );
                     arrayOfReviewInstances.push(newInstance);
                     
+                    console.log('     vv vv vv new instance vv vv vv');
                     console.log(newInstance);
-                    console.log('^^ ^^ ^^ new instance ^^ ^^ ^^');
                     console.log(' ');
                 });
 
-                console.log('vvvv that is the array of review instances vvvv');
+                console.log('     vvvv that is the array of review instances vvvv');
                 console.log(arrayOfReviewInstances);
                 console.log(' ');
 

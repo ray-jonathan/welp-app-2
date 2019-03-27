@@ -33,6 +33,31 @@ describe('Users model', () => {
         const alsoTheUser = await User.getById(2);
         expect(alsoTheUser.email).to.equal('tomorrowneverdies@netscape.net');
     });
+    it('should encrypt the password', async () => {
+        const password = "bacon"
+        // get a user with id 1
+        const theUser = await User.getById(1);
+        // set their password field to "bacon"
+        theUser.setPassword(password);
+        // compare their password to "bacon"
+        expect(theUser.password).not.to.equal("bacon");
+        // it should be false
+    });
+    it('should be able to check for correct passwords', async () => {
+        // get a user with id 1
+        const theUser = await User.getById(1);
+        // set their password field to "bacon"
+        theUser.setPassword("bacon");
+        // same them to the database
+        await theUser.save();
+        // get them back out of the database
+        const sameUser = await User.getById(1);
+        // ask them if their password is bacon
+        const isCorrectPassword = sameUser.checkPassword("bacon");
+        expect(isCorrectPassword).to.be.true;
+        const isNotCorrectPassword = sameUser.checkPassword("tofu");
+        expect(isNotCorrectPassword).to.be.false;
+    });
 });
 
 describe('Restaurant model', () => {
@@ -116,13 +141,15 @@ describe('Users and Reviews', () => {
         // and that each one is an instance of a Review
         
         console.log(' ');
-        console.log('THIS SHOULD BE THE FIRST REVIEW INSTANCE, NOT ARRAY:');
+        console.log('     THIS SHOULD BE THE FIRST REVIEW INSTANCE, NOT ARRAY:');
         console.log(theReviews[0]);
         
-        for (let i=0; i < theReviews.length; i++){
-            console.log(' ');
-            console.log(typeof theReviews[i]);
-            // expect(theReviews[i]).to.be.an.instanceOf(Reviews);
-        }
+        expect(theReviews[0]).to.be.an.instanceOf(Reviews);
+        
+        // for (let i=0; i < theReviews.length; i++){
+        //     console.log(' ');
+        //     console.log(typeof theReviews[i]);
+        //     expect(theReviews[i]).to.be.an.instanceOf(Reviews);
+        // }
     });
 });
