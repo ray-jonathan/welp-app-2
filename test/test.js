@@ -108,7 +108,7 @@ describe('Users and Reviews', () => {
         // grab a user by id
         const theUser = await User.getById(3);
         // then get all their reviews
-        const theReviews = await theUser.getReviews();
+        const theReviews = await theUser.reviews;
         // confirm that their reviews are in an array
         expect(theReviews).to.be.an.instanceOf(Array);
         //and that the array is the correct length
