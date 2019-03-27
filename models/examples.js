@@ -69,5 +69,5 @@ async function main(){
     const user3 = await getCountOfFavoritesAndAvgRatingByRestName("chilis");
     console.log(user3);
 }
-main();
+// main();
 
