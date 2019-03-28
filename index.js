@@ -4,6 +4,7 @@ const port = 3000;
 const Restaurant = require('./models/restaurants');
 const User = require('./models/user');
 const Reviews = require('./models/reviews');
+const querystring = require('querystring');
 
 const server = http.createServer(async (req, res) => { // this function could be referred to "middleware" and "request handler"
     res.statusCode = 200;
@@ -11,15 +12,23 @@ const server = http.createServer(async (req, res) => { // this function could be
     const path = req.url;
     const method = req.method;
 
-    if (path === "/restaurants"){
+    if (path.startsWith("/restaurants")){
         if (method === "POST"){
-            res.end('{\nmessage:\n"it sounds like you would like to create"\n}');
+            let body = '';
+            req.on('data', (chunk) => {
+                body += chunk.toString();
+            });
+            req.on('end', () => {
+                const parsedBody = querystring.parse(body);
+                console.log(parsedBody);
+                res.end('{\n"message":\n"it sounds like you would like to create"\n}');
+            });
         }
         else if (method === "PUT"){
-            res.end('{\nmessage:\n"it sounds like you would like to update"\n}');
+            res.end('{\n"message":\n"it sounds like you would like to update"\n}');
         }
         else if (method === "DELETE"){
-            res.end('{\nmessage:\n"it sounds like you would like to delete"\n}');
+            res.end('{\n"message":\n"it sounds like you would like to delete"\n}');
         }
         else if (method === "GET"){
             const allRestaurants = await Restaurant.getAll();
@@ -29,13 +38,21 @@ const server = http.createServer(async (req, res) => { // this function could be
     }
     if (path.startsWith("/users")){
         if (method === "POST"){
-            res.end('{\nmessage:\n"it sounds like you would like to create"\n}');
+            let body = '';
+            req.on('data', (chunk) => {
+                body += chunk.toString();
+            });
+            req.on('end', () => {
+                const parsedBody = querystring.parse(body);
+                console.log(parsedBody);
+                res.end('{\n"message":\n"it sounds like you would like to create"\n}');
+            });
         }
         else if (method === "PUT"){
-            res.end('{\nmessage:\n"it sounds like you would like to update"\n}');
+            res.end('{\n"message":\n"it sounds like you would like to update"\n}');
         }
         else if (method === "DELETE"){
-            res.end('{\nmessage:\n"it sounds like you would like to delete"\n}');
+            res.end('{\n"message":\n"it sounds like you would like to delete"\n}');
         }
         else if (method === "GET"){
             const parts = req.url.split("?q=");
@@ -66,15 +83,23 @@ const server = http.createServer(async (req, res) => { // this function could be
             }
         }
     }
-    if (path === "/reviews"){
+    if (path.startsWith("/reviews")){
         if (method === "POST"){
-            res.end('{\nmessage:\n"it sounds like you would like to create"\n}');
+            let body = '';
+            req.on('data', (chunk) => {
+                body += chunk.toString();
+            });
+            req.on('end', () => {
+                const parsedBody = querystring.parse(body);
+                console.log(parsedBody);
+                res.end('{\n"message":\n"it sounds like you would like to create"\n}');
+            });
         }
         else if (method === "PUT"){
-            res.end('{\nmessage:\n"it sounds like you would like to update"\n}');
+            res.end('{\n"message":\n"it sounds like you would like to update"\n}');
         }
         else if (method === "DELETE"){
-            res.end('{\nmessage:\n"it sounds like you would like to delete"\n}');
+            res.end('{\n"message":\n"it sounds like you would like to delete"\n}');
         }
         else if (method === "GET"){
             const allReviews = await Reviews.getAll();
@@ -83,14 +108,15 @@ const server = http.createServer(async (req, res) => { // this function could be
         }
     }
     
-    // if req.url is "/reviews", send them all reviews
     else{
         res.end(`{
-            \nmessage: \nThank your for your patronage. \nPlease send @radishmouse bitcoin and gentle words of encouragement.
-        \n}`);
+            "message": 
+            Thank your for your patronage. 
+            Please send @radishmouse bitcoin and gentle words of encouragement.
+        }`);
     }
-    // else send them a welcome message
 });
+
 server.listen(port, hostname, () => {
     console.log(`Server is running at http://${hostname}:${port}`);
 });
