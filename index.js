@@ -16,7 +16,13 @@ const server = http.createServer(async (req, res) => { // this function could be
     // if req.url is "/restaurants", send them all restaurants
     // if req.url is "/users", send them all users
     if (method === "POST"){
-        res.end('{\nmessage:\n"no soup for you"\n}');
+        res.end('{\nmessage:\n"it sounds like you would like to create"\n}');
+    }
+    else if (method === "PUT"){
+        res.end('{\nmessage:\n"it sounds like you would like to update"\n}');
+    }
+    else if (method === "DELETE"){
+        res.end('{\nmessage:\n"it sounds like you would like to delete"\n}');
     }
     else if (method === "GET"){
         if (req.url === "/restaurants"){
