@@ -15,6 +15,14 @@ class User {
         this.password = password;
     }
     // static means that the function is something the class can do but an instance cannot
+    static getAll(){
+        // db.any returns an array of results
+        // db.one will give us just the object
+        return db.any(`select * from users usr`)
+            .catch(() => {
+                return null; // signal an invalid value
+            });
+    }
     static getById(id){
         // db.any returns an array of results
         // db.one will give us just the object
@@ -26,6 +34,10 @@ class User {
             .catch(() => {
                 return null; // signal an invalid value
             });
+    }
+    static countTheUsers(){
+        // counts the number of users in the table
+        return db.result(`select max(id) from users;`);
     }
     // no static below since this is an "instance method" and therefore should belong to the individual instances
     save(){
@@ -51,11 +63,6 @@ class User {
             .then((arrayOfReviewData) => {
                 const arrayOfReviewInstances = [];
                 arrayOfReviewData.forEach((data) => {
-
-                    console.log('     vvvv this is "DATA" vvvv');
-                    console.log(data);
-                    console.log(' ');
-
                     const newInstance = new Reviews(
                                                     data.id, 
                                                     data.score, 
@@ -64,16 +71,7 @@ class User {
                                                     data.user_id
                     );
                     arrayOfReviewInstances.push(newInstance);
-                    
-                    console.log('     vv vv vv new instance vv vv vv');
-                    console.log(newInstance);
-                    console.log(' ');
                 });
-
-                console.log('     vvvv that is the array of review instances vvvv');
-                console.log(arrayOfReviewInstances);
-                console.log(' ');
-
                 return arrayOfReviewInstances;
             });
     }

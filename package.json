@@ -9,6 +9,8 @@
     "db:destroy": "dropdb restaurants-app",
     "db:reset": "npm run db:destroy; npm run db:create && npm run db:init",
     "test": "mocha",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test:watch": "mocha -w"
   },
   "repository": {
@@ -29,6 +31,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "mocha": "^6.0.2"
+    "mocha": "^6.0.2",
+    "nodemon": "^1.18.10"
   }
 }
