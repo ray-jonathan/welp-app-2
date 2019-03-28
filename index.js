@@ -6,31 +6,38 @@ const User = require('./models/user');
 const Reviews = require('./models/reviews');
 
 const server = http.createServer(async (req, res) => { // this function could be referred to "middleware" and "request handler"
-    console.log(req.method);
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-
+    const path = req.url;
     const method = req.method;
 
-
-    // if req.url is "/restaurants", send them all restaurants
-    // if req.url is "/users", send them all users
-    if (method === "POST"){
-        res.end('{\nmessage:\n"it sounds like you would like to create"\n}');
-    }
-    else if (method === "PUT"){
-        res.end('{\nmessage:\n"it sounds like you would like to update"\n}');
-    }
-    else if (method === "DELETE"){
-        res.end('{\nmessage:\n"it sounds like you would like to delete"\n}');
-    }
-    else if (method === "GET"){
-        if (req.url === "/restaurants"){
+    if (path === "/restaurants"){
+        if (method === "POST"){
+            res.end('{\nmessage:\n"it sounds like you would like to create"\n}');
+        }
+        else if (method === "PUT"){
+            res.end('{\nmessage:\n"it sounds like you would like to update"\n}');
+        }
+        else if (method === "DELETE"){
+            res.end('{\nmessage:\n"it sounds like you would like to delete"\n}');
+        }
+        else if (method === "GET"){
             const allRestaurants = await Restaurant.getAll();
             const restaurantJSON = JSON.stringify(allRestaurants);
             res.end(restaurantJSON);
         }
-        if (req.url.startsWith("/users")){
+    }
+    if (path.startsWith("/users")){
+        if (method === "POST"){
+            res.end('{\nmessage:\n"it sounds like you would like to create"\n}');
+        }
+        else if (method === "PUT"){
+            res.end('{\nmessage:\n"it sounds like you would like to update"\n}');
+        }
+        else if (method === "DELETE"){
+            res.end('{\nmessage:\n"it sounds like you would like to delete"\n}');
+        }
+        else if (method === "GET"){
             const parts = req.url.split("?q=");
             if (parts.length === 1){
                 console.log('We think the parts length is 1 after splitting on ?q=');
@@ -58,12 +65,24 @@ const server = http.createServer(async (req, res) => { // this function could be
                 res.end(userJSON);
             }
         }
-        if (req.url === "/reviews"){
+    }
+    if (path === "/reviews"){
+        if (method === "POST"){
+            res.end('{\nmessage:\n"it sounds like you would like to create"\n}');
+        }
+        else if (method === "PUT"){
+            res.end('{\nmessage:\n"it sounds like you would like to update"\n}');
+        }
+        else if (method === "DELETE"){
+            res.end('{\nmessage:\n"it sounds like you would like to delete"\n}');
+        }
+        else if (method === "GET"){
             const allReviews = await Reviews.getAll();
             const reviewsJSON = JSON.stringify(allReviews);
             res.end(reviewsJSON);
         }
     }
+    
     // if req.url is "/reviews", send them all reviews
     else{
         res.end(`{
