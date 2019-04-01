@@ -1,148 +1,144 @@
-const http = require('http');
-const hostname = '127.0.0.1';
+const express = require('express'); // bring in the express library
+const app = express(); // creat a new express app
+
+
+const http = require('http'); // express replaces this
+// const hostname = '127.0.0.1'; // express replaces this
 const port = 3000;
 const Restaurant = require('./models/restaurants');
 const User = require('./models/user');
 const Reviews = require('./models/reviews');
+const Favorites = require('./models/favorites');
 const querystring = require('querystring');
 
-const server = http.createServer(async (req, res) => { // this function could be referred to "middleware" and "request handler"
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    const path = req.url;
-    const method = req.method;
-
-    if (path.startsWith("/restaurants")){
-        if (method === "POST"){
-            let body = '';
-            req.on('data', (chunk) => {
-                body += chunk.toString();
-            });
-            req.on('end', () => {
-                const parsedBody = querystring.parse(body);
-                console.log(parsedBody);
-                res.end('{\n"message":\n"it sounds like you would like to create"\n}');
-            });
-        }
-        else if (method === "PUT"){
-            res.end('{\n"message":\n"it sounds like you would like to update"\n}');
-        }
-        else if (method === "DELETE"){
-            res.end('{\n"message":\n"it sounds like you would like to delete"\n}');
-        }
-        else if (method === "GET"){
-            const allRestaurants = await Restaurant.getAll();
-            const restaurantJSON = JSON.stringify(allRestaurants);
-            res.end(restaurantJSON);
-        }
-    }
-
-
-    if (path.startsWith("/users")){
-        if (method === "POST"){
-            let body = '';
-            req.on('data', (chunk) => {
-                body += chunk.toString();
-            });
-            req.on('end', async () => {
-                const parsedBody = querystring.parse(body);
-                console.log('====================');
-                console.log(parsedBody);
-                console.log('^^^^^^ BODY OF FORM ^^^^^^^^');
-                const newUserID = await User.add(parsedBody);
-                res.end(`{ "id": ${newUserID}}`);
-            });
-        }
-        else if (method === "PUT"){
-            res.end('{\n"message":\n"it sounds like you would like to update"\n}');
-        }
-        else if (method === "DELETE"){
-            console.log(req.url);
-            const parts = req.url.split("?q=");
-            if (parts[1].startsWith("%7Bid")){
-                const id = parseInt(stripSearch(parts[1]));
-                console.log(' This is the key to delete:');
-                console.log(id);
-                console.log('^^^^^^^^^^');
-                await User.delete(id);
-                res.end(`{\n"message":\n"deleted user_${id}"\n}`);
-                }
-        }
-        else if (method === "GET"){
-            const parts = req.url.split("?q=");
-            if (parts.length === 1){
-                console.log('We think the parts length is 1 after splitting on ?q=');
-                const allUsers = await User.getAll();
-                const userJSON = JSON.stringify(allUsers);
-                res.end(userJSON);
-            }
-            else if (parts[1].startsWith("{id")){
-                const numberOfUsers = await User.countTheUsers;
-                const id = parseInt(stripSearch(parts[1]));
-                console.log(id);
-                if (id < numberOfUsers){
-                    const singleUser = await User.getById(id);
-                    const singleUserJSON = JSON.stringify(singleUser);
-                    res.end(singleUserJSON);
-                }
-                else{
-                    const allUsers = await User.getAll();
-                    const userJSON = JSON.stringify(allUsers);
-                    res.end("{\nerror:\n'The user ID you requested does not exist. \nPlease check your number and try again.\nHere are all the users in the meantime.\n}'\n\n"+ userJSON);
-                }
-            }
-            else{
-                const allUsers = await User.getAll();
-                const userJSON = JSON.stringify(allUsers);
-                res.end(userJSON);
-            }
-        }
-        }
-    
-
-    else if (path.startsWith("/reviews")){
-        if (method === "POST"){
-            let body = '';
-            req.on('data', (chunk) => {
-                body += chunk.toString();
-            });
-            req.on('end', () => {
-                const parsedBody = querystring.parse(body);
-                console.log(parsedBody);
-                res.end('{\n"message":\n"it sounds like you would like to create"\n}');
-            });
-        }
-        else if (method === "PUT"){
-            res.end('{\n"message":\n"it sounds like you would like to update"\n}');
-        }
-        else if (method === "DELETE"){
-            res.end('{\n"message":\n"it sounds like you would like to delete"\n}');
-        }
-        else if (method === "GET"){
-            const allReviews = await Reviews.getAll();
-            const reviewsJSON = JSON.stringify(allReviews);
-            res.end(reviewsJSON);
-        }
-    }
-    
-
-    else{
-        res.end(`{
-            "message": 
-            Thank your for your patronage. 
-            Please send @radishmouse bitcoin and gentle words of encouragement.
-        }`);
-    }
+// RESTAURANT ROUTES
+app.post('/restaurants', (req, res) => {
+    let body = '';
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+    req.on('end', () => {
+        const parsedBody = querystring.parse(body);
+        console.log(parsedBody);
+        res.send('{\n"message":\n"it sounds like you would like to create"\n}');
+    });
+});
+app.put('/restaurants', (req, res) => {
+    res.send('{\n"message":\n"it sounds like you would like to update"\n}');
+});
+app.delete('/restaurants', (req, res) => {
+    res.send('{\n"message":\n"it sounds like you would like to delete"\n}');
+});
+app.get('/restaurants', async (req, res) => {
+    const allRestaurants = await Restaurant.getAll();
+    // const restaurantJSON = JSON.stringify(allRestaurants); // express replaces this
+    res.json(restaurantJSON);
 });
 
-server.listen(port, hostname, () => {
-    console.log(`Server is running at http://${hostname}:${port}`);
+// USER ROUTES
+app.post('/users', (req, res) => {
+    let body = '';
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+    req.on('end', () => {
+        const parsedBody = querystring.parse(body);
+        console.log(parsedBody);
+        res.send('{\n"message":\n"it sounds like you would like to create"\n}');
+    });
+});
+app.put('/users', (req, res) => {
+    res.send('{\n"message":\n"it sounds like you would like to update"\n}');
+});
+app.delete('/users/:id', async (req, res) => {
+    const {id} = req.params;
+    await User.delete(id);
+    res.send(`{\n"message":\n"deleted user_${id}"\n}`);
+});
+app.get('/users/:id', async (req, res) => {
+    const {id} = req.params;
+    const userJSON = await User.getById(id);
+    res.json(userJSON);
+});
+app.get('/users', async (req, res) => {
+    const {id} = req.params;
+    const allUsers = await User.getAll();
+    res.json(allUsers);
 });
 
-function stripSearch(string){
-    const splitString = string.split(":");
-    const toTheRight = splitString[1];
-    const toTheLeft = toTheRight.split("}");
-    const id = toTheLeft[0];
-    return id;
-}
+// REVIEWS ROUTES
+app.post('/reviews', (req, res) => {
+    let body = '';
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+    req.on('end', () => {
+        const parsedBody = querystring.parse(body);
+        console.log(parsedBody);
+        res.send('{\n"message":\n"it sounds like you would like to create"\n}');
+    });
+});
+app.put('/reviews', (req, res) => {
+    res.end('{\n"message":\n"it sounds like you would like to update"\n}');
+});
+app.delete('/reviews', async (req, res) => {
+    res.end('{\n"message":\n"it sounds like you would like to delete"\n}');
+});
+app.get('/reviews/:id', async (req, res) => {
+    const {id} = req.params;
+    const oneReview = await Reviews.getByID(id);
+    res.json(oneReview);
+});
+app.get('/reviews', async (req, res) => {
+    const allReviews = await Reviews.getAll();
+    res.json(allReviews);
+});
+
+// FAVORITES ROUTES
+app.get('/favorites', async (req, res) => {
+    const allFavorites = await Favorites.getAll();
+    res.json(allFavorites);
+});
+app.get('/favorites/:id', async (req, res) => {
+    const {id} = req.params;
+    const oneFavorite = await Favorites.getByID(id);
+    res.json(oneFavorite);
+});
+app.get('/favorites/:id/update/:uid/:rid', async (req, res) => {
+    const {id,uid,rid} = req.params;
+    const oneFavorite = await Favorites.getByID(id);
+    oneFavorite.userId = uid;
+    oneFavorite.restId = rid;
+    await oneFavorite.save();
+    const oneFavoriteAgain = await Favorites.getByID(id);
+    res.json(oneFavoriteAgain);
+});
+
+// CATCH ALL
+app.all('*', (req, res) => {
+    res.json(
+        {message:
+            "Thank your for your patronage. Please send @radishmouse bitcoin and gentle words of encouragement."
+        });
+});
+
+
+
+
+// server.listen(port, hostname, () => {  // express replaces this
+//     console.log(`Server is running at http://${hostname}:${port}`);  // express replaces this
+// });  // express replaces this
+
+
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});
+
+
+// function stripSearch(string){ // unnecessary with how express handles paths with params
+//     const splitString = string.split(":");
+//     const toTheRight = splitString[1];
+//     const toTheLeft = toTheRight.split("}");
+//     const id = toTheLeft[0];
+//     return id;
+// }
