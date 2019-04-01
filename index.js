@@ -36,23 +36,37 @@ const server = http.createServer(async (req, res) => { // this function could be
             res.end(restaurantJSON);
         }
     }
+
+
     if (path.startsWith("/users")){
         if (method === "POST"){
             let body = '';
             req.on('data', (chunk) => {
                 body += chunk.toString();
             });
-            req.on('end', () => {
+            req.on('end', async () => {
                 const parsedBody = querystring.parse(body);
+                console.log('====================');
                 console.log(parsedBody);
-                res.end('{\n"message":\n"it sounds like you would like to create"\n}');
+                console.log('^^^^^^ BODY OF FORM ^^^^^^^^');
+                const newUserID = await User.add(parsedBody);
+                res.end(`{ "id": ${newUserID}}`);
             });
         }
         else if (method === "PUT"){
             res.end('{\n"message":\n"it sounds like you would like to update"\n}');
         }
         else if (method === "DELETE"){
-            res.end('{\n"message":\n"it sounds like you would like to delete"\n}');
+            console.log(req.url);
+            const parts = req.url.split("?q=");
+            if (parts[1].startsWith("%7Bid")){
+                const id = parseInt(stripSearch(parts[1]));
+                console.log(' This is the key to delete:');
+                console.log(id);
+                console.log('^^^^^^^^^^');
+                await User.delete(id);
+                res.end(`{\n"message":\n"deleted user_${id}"\n}`);
+                }
         }
         else if (method === "GET"){
             const parts = req.url.split("?q=");
@@ -65,6 +79,7 @@ const server = http.createServer(async (req, res) => { // this function could be
             else if (parts[1].startsWith("{id")){
                 const numberOfUsers = await User.countTheUsers;
                 const id = parseInt(stripSearch(parts[1]));
+                console.log(id);
                 if (id < numberOfUsers){
                     const singleUser = await User.getById(id);
                     const singleUserJSON = JSON.stringify(singleUser);
@@ -82,8 +97,10 @@ const server = http.createServer(async (req, res) => { // this function could be
                 res.end(userJSON);
             }
         }
-    }
-    if (path.startsWith("/reviews")){
+        }
+    
+
+    else if (path.startsWith("/reviews")){
         if (method === "POST"){
             let body = '';
             req.on('data', (chunk) => {
@@ -108,6 +125,7 @@ const server = http.createServer(async (req, res) => { // this function could be
         }
     }
     
+
     else{
         res.end(`{
             "message": 

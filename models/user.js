@@ -75,6 +75,31 @@ class User {
                 return arrayOfReviewInstances;
             });
     }
+    
+
+    // for POST methods
+    static add(userData){
+        // do an insert into the database
+        // don't use ${} because you shouldn't be the one interpolating-- use "$_" to let pg-promise do the safe interpolation
+        return db.one(`
+        insert into users 
+            (first_name, last_name, email, password) 
+        values 
+            ($1, $2, $3, $4) 
+        returning id
+        `, [userData.first_name, userData.last_name, userData.email, userData.password])
+        .then((data) => {
+            console.log("new user id is:");
+            console.log(data.id);
+            return data.id;
+        });
+        // and return the id of the new user
+    }
+
+    // for DELETE methods
+    static delete(id){
+        return db.result(`delete from users where id=$1`, [id]);
+    }
 }
 
 // exploratory code
