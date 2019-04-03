@@ -1,15 +1,28 @@
 const express = require('express'); // bring in the express library
 const app = express(); // creat a new express app
 const es6Renderer = require('express-es6-template-engine');
-
-const http = require('http'); // express replaces this
-// const hostname = '127.0.0.1'; // express replaces this
 const port = 3000;
 
-app.engine('html', es6Renderer);
+// const http = require('http'); // express replaces this
+// const hostname = '127.0.0.1'; // express replaces this
 
+
+app.engine('html', es6Renderer);
 app.set('views', './views');
 app.set('view engine', 'html');
+
+
+app.use(express.urlencoded({ extended: true }));
+
+app.get('/login', (req, res) => {
+    res.render('login-form');
+});
+app.post('/login', (req, res) => {
+    // res.render('');
+    console.log(req.body);
+    res.send('dumbbutton');
+});
+
 
 const Restaurant = require('./models/restaurants');
 const User = require('./models/user');
